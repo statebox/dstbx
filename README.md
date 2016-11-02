@@ -1,6 +1,6 @@
 # Petri nets (*a la* Statebox) in Idris
 
-![](srcrz.png)
+![](scrnz.png)
 
 As a follow-up on my talk on FPAMS, here is some basic dependently
 typed petri nets in Idris.
