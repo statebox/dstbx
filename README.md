@@ -1,35 +1,24 @@
-# Petri nets in Idris
+# Petri nets (*a la* Statebox) in Idris
 
-These are some experiments to see what the current status
-of Idris is and how pleasant it works for this kind of stuff.
+![](srcrz.png)
 
-Conclusion so far: Idris remains most pleasant-to-use DTP-language.
+As a follow-up on my talk on FPAMS, here is some basic dependently
+typed petri nets in Idris.
 
----
+It doesn't do much yet, just basic Petri nets, no colour,
+no types.
 
-```
-~/s/dstb (master:61) » idris net.idr                                             21:47
-    ____    __     _
-   /  _/___/ /____(_)____
-   / // __  / ___/ / ___/     Version 0.12.2
- _/ // /_/ / /  / (__  )      http://www.idris-lang.org/
-/___/\__,_/_/  /_/____/       Type :? for help
+No proofs... in particular initiality of the first
+transition in an instance (`Init _ t0`).
 
-Idris is free software with ABSOLUTELY NO WARRANTY.
-For details type :warranty.
-Type checking ./net.idr
-*net> marking i0
-Just [FZ, FS FZ] : Maybe (List (Fin 4))
-*net> marking i1
-Just [FS FZ, FS (FS FZ)] : Maybe (List (Fin 4))
-*net>
-Bye bye
-```
+Nor `Enabled <=> \Exist m. m --[t]--> m' /\ m' = m - (pre t) + (post
+t)`.
 
----
 
-The type `Net (s:Nat) (t:Nat)` is the type of finite petri nets
-over `s` number of places with `t` number of transition
+What *is* "dependent" here is only the size of the two partitions.
+
+That is, a `Net s t` is a petrinet where the set of places is
+`Fin s` and the set of transitions `Fin t`.
 
 For example:
 
@@ -41,7 +30,12 @@ For example:
       ([2,3], [])
     ]
 
-To create an instance, use the `Instance s t` data structure.
+To create an instance, use the `Inst` data structure.
+
+It has two constructors,
+
+- `Init` takes a net and a transition
+- `Fire` takes an instance and a transition
 
 Fire the first transition
 
@@ -60,3 +54,11 @@ We can now get the marking corresponding to the instances
 
     marking i1
     => Just [1, 2]
+
+Or obtain an instance directly from a net and a nonempty
+transition firing sequence.
+
+```
+*fnet> :t fire
+fire : Net s t -> Transitions -> Inst s t
+```
